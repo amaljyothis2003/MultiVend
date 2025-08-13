@@ -1,0 +1,20 @@
+# Node modules
+node_modules/
+*/node_modules/
+
+# Environment files
+.env
+*.env
+*/.env
+
+# Logs
+logs/
+*.log
+
+# Dependency locks (optional, if you want to ignore them)
+package-lock.json
+yarn.lock
+
+# OS files
+.DS_Store
+Thumbs.db

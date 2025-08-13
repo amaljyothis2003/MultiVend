@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  mongo-user:
+    image: mongo:6
+    container_name: mongo-user
+    restart: always
+    ports:
+      - "27017:27017"          # expose only for local debugging; remove in prod
+    volumes:
+      - user-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      # Container-to-container host: use the service name "mongo-user"
+      - PORT=3001
+      - MONGO_URI=mongodb://mongo-user:27017/userdb
+      - JWT_SECRET=your_jwt_secret
+      # Optional: raise Node's heap/file watchers if needed
+      # - NODE_OPTIONS=--max-old-space-size=256
+    depends_on:
+      mongo-user:
+        condition: service_healthy
+
+volumes:
+  user-data:
