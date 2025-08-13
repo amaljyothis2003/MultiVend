@@ -55,8 +55,40 @@ services:
       mongo-product:
         condition: service_healthy
 
+  mongo-order:
+    image: mongo:6
+    container_name: mongo-order
+    restart: always
+    ports:
+      - "27019:27017"
+    volumes:
+      - order-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    restart: always
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - MONGO_URI=mongodb://mongo-order:27017/orderdb
+      - JWT_SECRET=3f8b2e1c9d7a4b6e5f1a2c3d4e6f7g8h9i0jklmnopqrs
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+    depends_on:
+      mongo-order:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+
 
 volumes:
   user-data:
   product-data:
+  order-data:
 
