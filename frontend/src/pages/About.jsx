@@ -43,8 +43,8 @@ export default function About() {
       </section>
 
       {/* Mission & Vision */}
-      <section style={{ padding: '4rem 1rem' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <section style={{ padding: '4rem 1rem', width: '100%' }}>
+        <div style={{ width: '100%' }}>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
@@ -134,9 +134,10 @@ export default function About() {
         backgroundColor: 'white',
         padding: '4rem 1rem',
         borderTop: '1px solid #e5e7eb',
-        borderBottom: '1px solid #e5e7eb'
+        borderBottom: '1px solid #e5e7eb',
+        width: '100%'
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ width: '100%' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h2 style={{
               fontSize: '2.5rem',
@@ -293,8 +294,8 @@ export default function About() {
       </section>
 
       {/* Features */}
-      <section style={{ padding: '4rem 1rem' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <section style={{ padding: '4rem 1rem', width: '100%' }}>
+        <div style={{ width: '100%' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h2 style={{
               fontSize: '2.5rem',

@@ -158,8 +158,8 @@ export default function Orders() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div style={{ backgroundColor: '#f9fafb', minHeight: '100vh', padding: '2rem 1rem' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ backgroundColor: '#f9fafb', minHeight: '100vh', padding: '2rem 1rem', width: '100%' }}>
+      <div style={{ width: '100%' }}>
         {/* Header */}
         <div style={{ 
           display: 'flex', 

@@ -24,7 +24,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: 'white', minHeight: '100vh', width: '100%', padding: 0, margin: 0 }}>
       <HeroSection />
       <FeaturedProducts products={products} loading={loading} error={error} />
     </div>

@@ -13,11 +13,11 @@ export default function Navbar() {
       backgroundColor: 'white',
       borderBottom: '1px solid #e5e7eb',
       padding: '0 2rem',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+      width: '100%'
     }}>
       <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
+        width: '100%',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',

@@ -5,9 +5,10 @@ export default function Footer() {
     <footer style={{
       backgroundColor: '#1f2937',
       color: 'white',
-      padding: '3rem 2rem 2rem'
+      padding: '3rem 2rem 2rem',
+      width: '100%'
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ width: '100%', maxWidth: 'none' }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',

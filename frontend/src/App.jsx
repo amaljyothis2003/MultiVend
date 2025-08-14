@@ -36,9 +36,17 @@ function App() {
   }
 
   return (
-    <div style={{ backgroundColor: 'white', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ 
+      backgroundColor: 'white', 
+      minHeight: '100vh', 
+      width: '100%',
+      display: 'flex', 
+      flexDirection: 'column',
+      margin: 0,
+      padding: 0
+    }}>
       <Navbar />
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1, width: '100%' }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />

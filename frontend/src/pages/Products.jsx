@@ -93,8 +93,8 @@ export default function Products() {
 
   if (error) {
     return (
-      <div style={{ padding: '4rem 2rem', backgroundColor: 'white', minHeight: '60vh' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+      <div style={{ padding: '4rem 2rem', backgroundColor: 'white', minHeight: '60vh', width: '100%' }}>
+        <div style={{ width: '100%', textAlign: 'center' }}>
           <p style={{ fontSize: '1.125rem', color: '#ef4444' }}>Error: {error}</p>
         </div>
       </div>
@@ -102,8 +102,8 @@ export default function Products() {
   }
 
   return (
-    <div style={{ backgroundColor: '#f9fafb', minHeight: '100vh', padding: '2rem 1rem' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ backgroundColor: '#f9fafb', minHeight: '100vh', padding: '2rem 1rem', width: '100%' }}>
+      <div style={{ width: '100%' }}>
         {/* Header */}
         <div style={{ 
           display: 'flex', 

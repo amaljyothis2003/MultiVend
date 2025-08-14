@@ -4,8 +4,8 @@ import { LoadingCard } from './LoadingSpinner';
 export default function FeaturedProducts({ products, loading, error }) {
   if (loading) {
     return (
-      <section style={{ padding: '4rem 2rem', backgroundColor: 'white' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <section style={{ padding: '4rem 2rem', backgroundColor: 'white', width: '100%' }}>
+        <div style={{ width: '100%', maxWidth: 'none' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h2 style={{
               fontSize: '2.5rem',
@@ -41,8 +41,8 @@ export default function FeaturedProducts({ products, loading, error }) {
 
   if (error) {
     return (
-      <div style={{ padding: '4rem 2rem', backgroundColor: 'white' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+      <div style={{ padding: '4rem 2rem', backgroundColor: 'white', width: '100%' }}>
+        <div style={{ width: '100%', textAlign: 'center' }}>
           <p style={{ fontSize: '1.125rem', color: '#ef4444' }}>Error loading products: {error}</p>
         </div>
       </div>
@@ -52,8 +52,8 @@ export default function FeaturedProducts({ products, loading, error }) {
   const featuredProducts = products.slice(0, 8);
 
   return (
-    <section style={{ padding: '4rem 2rem', backgroundColor: 'white' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <section style={{ padding: '4rem 2rem', backgroundColor: 'white', width: '100%' }}>
+      <div style={{ width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <h2 style={{
             fontSize: '2.5rem',
