@@ -16,11 +16,12 @@ import Orders from './pages/Orders'
 import OrderConfirmation from './pages/OrderConfirmation'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import AdminDashboard from './pages/AdminDashboard'
 import { useAuth } from './contexts/AuthContext'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const { loading: authLoading } = useAuth();
+  const { loading: authLoading, isAuthenticated, role } = useAuth();
 
   useEffect(() => {
     // Simulate app initialization time
@@ -35,6 +36,22 @@ function App() {
     return <AppLoadingScreen />;
   }
 
+  // If admin, show only admin dashboard route and UI
+  if (isAuthenticated && role === 'admin') {
+    return (
+      <div style={{ backgroundColor: 'white', minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', margin: 0, padding: 0 }}>
+        <Navbar />
+        <main style={{ flex: 1, width: '100%' }}>
+          <Routes>
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Normal user/seller/buyer UI
   return (
     <div style={{ 
       backgroundColor: 'white', 
@@ -52,7 +69,6 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
-          
           {/* Authentication Routes - Only accessible when NOT logged in */}
           <Route path="/login" element={
             <ProtectedRoute requireAuth={false}>
@@ -64,7 +80,6 @@ function App() {
               <Register />
             </ProtectedRoute>
           } />
-          
           {/* Protected Routes - Only accessible when logged in */}
           <Route path="/manage-products" element={
             <ProtectedRoute requireAuth={true}>
@@ -95,7 +110,7 @@ function App() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
 
 export default App

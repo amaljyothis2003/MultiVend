@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { fetchJSON } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -23,6 +26,37 @@ export default function ProductDetail() {
     })();
     return () => { active = false; };
   }, [id]);
+
+  const handleBuyNow = () => {
+    console.log('Buy Now clicked! isAuthenticated:', isAuthenticated, 'product:', product);
+    
+    if (!isAuthenticated) {
+      // Store the buy now intent and redirect to login
+      localStorage.setItem('buyNowProduct', JSON.stringify({
+        productId: id,
+        product: product,
+        quantity: 1,
+        redirectTo: 'order-confirmation'
+      }));
+      navigate('/login', { state: { from: { pathname: `/products/${id}` } } });
+      return;
+    }
+    
+    if (product.stock <= 0) {
+      alert('This product is out of stock!');
+      return;
+    }
+    
+    console.log('Navigating to order confirmation with product:', product);
+    // Navigate to order confirmation page with product data
+    navigate('/order-confirmation', { 
+      state: { 
+        product: product,
+        productId: product._id,
+        quantity: 1 // Default quantity, can be made customizable
+      } 
+    });
+  };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -71,7 +105,7 @@ export default function ProductDetail() {
   return (
     <div style={{ backgroundColor: 'white', minHeight: '60vh' }}>
       <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-        <Link to="/" style={{
+        <Link to="/products" style={{
           display: 'inline-flex',
           alignItems: 'center',
           color: '#3b82f6',
@@ -195,19 +229,51 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <button style={{
-              width: '100%',
-              backgroundColor: product.stock > 0 ? '#3b82f6' : '#9ca3af',
-              color: 'white',
-              padding: '1rem 2rem',
-              fontSize: '1.125rem',
-              fontWeight: '600',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: product.stock > 0 ? 'pointer' : 'not-allowed'
-            }}>
-              {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-            </button>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                onClick={handleBuyNow}
+                style={{
+                  flex: 1,
+                  backgroundColor: product.stock > 0 ? '#ef4444' : '#9ca3af',
+                  color: 'white',
+                  padding: '1rem 2rem',
+                  fontSize: '1.125rem',
+                  fontWeight: '600',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: product.stock > 0 ? 'pointer' : 'not-allowed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem'
+                }}
+                disabled={product.stock <= 0}
+              >
+                <i className="fas fa-shopping-cart"></i>
+                {product.stock > 0 ? 'Buy Now' : 'Out of Stock'}
+              </button>
+
+              <button style={{
+                flex: 1,
+                backgroundColor: product.stock > 0 ? '#3b82f6' : '#9ca3af',
+                color: 'white',
+                padding: '1rem 2rem',
+                fontSize: '1.125rem',
+                fontWeight: '600',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: product.stock > 0 ? 'pointer' : 'not-allowed',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem'
+              }}
+              disabled={product.stock <= 0}
+              >
+                <i className="fas fa-plus"></i>
+                {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+              </button>
+            </div>
           </div>
         </div>
       </div>

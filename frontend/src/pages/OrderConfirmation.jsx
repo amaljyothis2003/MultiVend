@@ -21,13 +21,23 @@ export default function OrderConfirmation() {
     country: 'USA'
   });
 
+  console.log('OrderConfirmation component loaded with location.state:', location.state);
+
   // Get product info from location state or URL params
-  const productId = location.state?.productId || new URLSearchParams(location.search).get('productId');
+  const productFromState = location.state?.product;
+  const productId = location.state?.productId || productFromState?._id || new URLSearchParams(location.search).get('productId');
   const initialQuantity = location.state?.quantity || 1;
 
   const loadProduct = useCallback(async () => {
     try {
       setLoading(true);
+      // If we already have the product from state, use it
+      if (productFromState) {
+        setProduct(productFromState);
+        setLoading(false);
+        return;
+      }
+      // Otherwise, fetch it by ID
       const productData = await productAPI.getById(productId);
       setProduct(productData);
     } catch (e) {
@@ -35,10 +45,10 @@ export default function OrderConfirmation() {
     } finally {
       setLoading(false);
     }
-  }, [productId]);
+  }, [productId, productFromState]);
 
   useEffect(() => {
-    if (!productId) {
+    if (!productId && !productFromState) {
       navigate('/products');
       return;
     }
@@ -50,7 +60,7 @@ export default function OrderConfirmation() {
 
     setQuantity(initialQuantity);
     loadProduct();
-  }, [productId, user, navigate, initialQuantity, loadProduct]);
+  }, [productId, productFromState, user, navigate, initialQuantity, loadProduct]);
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;

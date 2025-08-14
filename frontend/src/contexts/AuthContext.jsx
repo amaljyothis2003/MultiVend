@@ -14,6 +14,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
   useEffect(() => {
     const verifyToken = async (authToken) => {
@@ -54,11 +56,32 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = (userData, authToken) => {
-    setUser(userData);
-    setToken(authToken);
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', authToken);
+
+  // Enhanced login to support admin login (frontend only)
+  const login = (userData, authToken, password) => {
+    // If admin credentials match, treat as admin
+    if (
+      userData?.email === ADMIN_EMAIL &&
+      password === ADMIN_PASSWORD
+    ) {
+      const adminUser = { ...userData, role: 'admin' };
+      setUser(adminUser);
+      setToken(authToken);
+      localStorage.setItem('user', JSON.stringify(adminUser));
+      localStorage.setItem('token', authToken);
+    } else {
+      setUser(userData);
+      setToken(authToken);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', authToken);
+    }
+  };
+
+
+  // Update user profile and role (frontend only)
+  const updateUser = (newUser) => {
+    setUser(newUser);
+    localStorage.setItem('user', JSON.stringify(newUser));
   };
 
   const logout = () => {
@@ -68,13 +91,24 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('token');
   };
 
+
+  // Determine role: admin, seller, buyer
+  let role = 'buyer';
+  if (user?.role === 'admin' || user?.email === ADMIN_EMAIL) {
+    role = 'admin';
+  } else if (user?.isSeller || user?.role === 'seller') {
+    role = 'seller';
+  }
+
   const value = {
     user,
     token,
     login,
     logout,
+    updateUser,
     loading,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
+    role
   };
 
   return (

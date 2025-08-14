@@ -1,13 +1,24 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import UserProfileModal from './UserProfileModal';
 
 export default function Navbar() {
-  const { user, logout, isAuthenticated } = useAuth();
-  
+  const { user, logout, isAuthenticated, role } = useAuth();
+  const [profileOpen, setProfileOpen] = useState(false);
+
   const handleLogout = () => {
     logout();
   };
-  
+
+  const handleProfileClick = () => {
+    setProfileOpen(true);
+  };
+
+  const handleProfileClose = () => {
+    setProfileOpen(false);
+  };
+
   return (
     <nav style={{
       backgroundColor: 'white',
@@ -57,16 +68,20 @@ export default function Navbar() {
             Products
           </Link>
           
-          {isAuthenticated && (
+
+          {/* Seller and Admin can manage products; all logged-in users can see orders */}
+          {isAuthenticated && role !== 'admin' && (
             <>
-              <Link to="/manage-products" style={{
-                textDecoration: 'none',
-                color: '#4b5563',
-                fontWeight: '500',
-                fontSize: '1rem'
-              }}>
-                Manage Products
-              </Link>
+              {role === 'seller' && (
+                <Link to="/manage-products" style={{
+                  textDecoration: 'none',
+                  color: '#4b5563',
+                  fontWeight: '500',
+                  fontSize: '1rem'
+                }}>
+                  Manage Products
+                </Link>
+              )}
               <Link to="/orders" style={{
                 textDecoration: 'none',
                 color: '#4b5563',
@@ -76,6 +91,22 @@ export default function Navbar() {
                 My Orders
               </Link>
             </>
+          )}
+
+          {/* Admin Dashboard link for admin only */}
+          {isAuthenticated && role === 'admin' && (
+            <Link to="/admin" style={{
+              textDecoration: 'none',
+              color: '#ef4444',
+              fontWeight: '700',
+              fontSize: '1rem',
+              border: '2px solid #ef4444',
+              borderRadius: '6px',
+              padding: '6px 14px',
+              background: '#fff0f0'
+            }}>
+              Admin Dashboard
+            </Link>
           )}
           
           <Link to="/about" style={{
@@ -90,30 +121,37 @@ export default function Navbar() {
           {/* Authentication Section */}
           {isAuthenticated ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '8px 12px',
-                backgroundColor: '#f3f4f6',
-                borderRadius: '6px',
-                fontSize: '0.875rem',
-                color: '#374151'
-              }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '8px 12px',
+                  backgroundColor: '#f3f4f6',
+                  borderRadius: '6px',
+                  fontSize: '0.875rem',
+                  color: '#374151',
+                  cursor: 'pointer',
+                  userSelect: 'none'
+                }}
+                onClick={handleProfileClick}
+                title="Edit Profile"
+              >
                 <i className="fas fa-user"></i>
                 <span>{user?.name}</span>
                 <span style={{
-                  backgroundColor: user?.role === 'seller' ? '#3b82f6' : '#10b981',
+                  backgroundColor: role === 'admin' ? '#ef4444' : (role === 'seller' ? '#3b82f6' : '#10b981'),
                   color: 'white',
                   padding: '2px 6px',
                   borderRadius: '4px',
                   fontSize: '0.75rem',
-                  textTransform: 'capitalize'
+                  textTransform: 'capitalize',
+                  fontWeight: 600
                 }}>
-                  {user?.role}
+                  {role}
                 </span>
               </div>
-              
+
               <button
                 onClick={handleLogout}
                 style={{
@@ -133,6 +171,8 @@ export default function Navbar() {
                 <i className="fas fa-sign-out-alt"></i>
                 Logout
               </button>
+              {/* User Profile Modal */}
+              <UserProfileModal open={profileOpen} onClose={handleProfileClose} />
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+
 export default function Login() {
   const [formData, setFormData] = useState({
     email: '',
@@ -13,6 +14,10 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Admin credentials from .env
+  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
   // Get the intended destination from state, default to home
   const from = location.state?.from?.pathname || '/';
@@ -30,6 +35,40 @@ export default function Login() {
     setLoading(true);
     setError('');
 
+    // Check for admin login (frontend only)
+    if (
+      formData.email.trim().toLowerCase() === (ADMIN_EMAIL || '').trim().toLowerCase() &&
+      formData.password === ADMIN_PASSWORD
+    ) {
+      // Fake admin user object
+      const adminUser = {
+        email: ADMIN_EMAIL,
+        name: 'Admin',
+        role: 'admin',
+      };
+      login(adminUser, 'admin-token', ADMIN_PASSWORD);
+      
+      // Check for buy now intent (admin can also buy)
+      const buyNowProduct = localStorage.getItem('buyNowProduct');
+      if (buyNowProduct) {
+        const productData = JSON.parse(buyNowProduct);
+        localStorage.removeItem('buyNowProduct');
+        console.log('Admin redirecting to order confirmation after login with:', productData);
+        navigate('/order-confirmation', {
+          state: {
+            product: productData.product,
+            productId: productData.productId,
+            quantity: productData.quantity
+          }
+        });
+      } else {
+        navigate('/admin', { replace: true });
+      }
+      setLoading(false);
+      return;
+    }
+
+    // Normal user login flow
     try {
       const response = await fetch(`${import.meta.env.VITE_USER_API_URL || 'http://localhost:3001'}/users/login`, {
         method: 'POST',
@@ -54,8 +93,24 @@ export default function Login() {
 
       if (profileResponse.ok) {
         const userProfile = await profileResponse.json();
-        login(userProfile, data.token);
-        navigate(from, { replace: true });
+        login(userProfile, data.token, formData.password);
+        
+        // Check for buy now intent
+        const buyNowProduct = localStorage.getItem('buyNowProduct');
+        if (buyNowProduct) {
+          const productData = JSON.parse(buyNowProduct);
+          localStorage.removeItem('buyNowProduct');
+          console.log('Redirecting to order confirmation after login with:', productData);
+          navigate('/order-confirmation', {
+            state: {
+              product: productData.product,
+              productId: productData.productId,
+              quantity: productData.quantity
+            }
+          });
+        } else {
+          navigate(from, { replace: true });
+        }
       } else {
         throw new Error('Failed to get user profile');
       }
