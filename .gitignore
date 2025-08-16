@@ -18,3 +18,7 @@ yarn.lock
 # OS files
 .DS_Store
 Thumbs.db
+
+# Build output
+dist/
+frontend/dist/
