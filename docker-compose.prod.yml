@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  # Frontend Service
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "${PORT:-8080}:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+
+  # User Service
+  user-service:
+    build: ./user-service
+    environment:
+      - PORT=3001
+      - MONGO_URI=${USER_DB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - NODE_ENV=production
+    ports:
+      - "3001:3001"
+
+  # Product Service  
+  product-service:
+    build: ./product-service
+    environment:
+      - PORT=3002
+      - MONGO_URI=${PRODUCT_DB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - NODE_ENV=production
+    ports:
+      - "3002:3002"
+
+  # Order Service
+  order-service:
+    build: ./order-service
+    environment:
+      - PORT=3003
+      - MONGO_URI=${ORDER_DB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+      - NODE_ENV=production
+    ports:
+      - "3003:3003"
+    depends_on:
+      - product-service
+
+# Note: Using MongoDB Atlas instead of local containers for production
