@@ -14,6 +14,11 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Product DB Connected'))
     .catch(err => console.error(err));
 
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK', service: 'Product Service', timestamp: new Date().toISOString() });
+});
+
 // Routes
 const productRoutes = require('./routes/productRoutes');
 app.use('/products', productRoutes);
