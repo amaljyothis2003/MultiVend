@@ -6,7 +6,15 @@ const cors = require('cors');
 dotenv.config();
 const app = express();
 
-app.use(cors());
+// CORS configuration for production
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://your-vercel-app.vercel.app', 'https://multivend-user-service.onrender.com', 'https://multivend-product-service.onrender.com', 'https://multivend-order-service.onrender.com']
+        : ['http://localhost:5173', 'http://localhost:3000'],
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Connect to MongoDB
